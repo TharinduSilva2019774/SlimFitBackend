@@ -9,14 +9,6 @@ import java.util.Date;
 @Setter
 public class SaveUserRequest {
 
-    private String email;
-
-    private String firstName;
-
-    private String lastName;
-
-    private int age;
-
     private Date dateOfBirth;
 
     private double height;
@@ -28,38 +20,6 @@ public class SaveUserRequest {
     private int weeklyWeightLossGoal;
 
     private int dailyActivityGoal;
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
 
     public Date getDateOfBirth() {
         return dateOfBirth;

@@ -10,7 +10,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Period;
+import java.util.Date;
 import java.util.Optional;
+
+import static com.example.slimfitbackend.util.Util.yearCountBetweenDates;
 
 @Service
 public class UserService {
@@ -25,13 +29,8 @@ public class UserService {
     public boolean createNewUser(SaveUserRequest saveUserRequest) {
 
         try {
-            Optional<User> optUser = userRepository.findByEmail(saveUserRequest.getEmail());
-
-            if (optUser.isPresent()) {
-                User user = optUser.get();
-                user.setFirstName(saveUserRequest.getFirstName());
-                user.setLastName(saveUserRequest.getLastName());
-                user.setAge(saveUserRequest.getAge());
+            User user = getCurrentUser();
+                user.setAge(yearCountBetweenDates(saveUserRequest.getDateOfBirth(),new Date()));
                 user.setDateOfBirth(saveUserRequest.getDateOfBirth());
                 user.setHeight(saveUserRequest.getHeight());
                 user.setWeight(saveUserRequest.getWeight());
@@ -47,7 +46,6 @@ public class UserService {
 
                 user.setDailyActivityGoal(saveUserRequest.getDailyActivityGoal());
                 userRepository.save(user);
-            }
 
             return true;
         } catch (Exception e) {
