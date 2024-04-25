@@ -47,6 +47,8 @@ public class User implements UserDetails {
 
     private String password;
 
+    private Date startDate;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -225,5 +227,13 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 }

@@ -1,6 +1,8 @@
 package com.example.slimfitbackend.controller;
 
 import com.example.slimfitbackend.payload.GetUserResponse;
+import com.example.slimfitbackend.payload.SaveUserWeightRequest;
+import com.example.slimfitbackend.payload.UserWeightResponse;
 import com.example.slimfitbackend.payload.SaveUserRequest;
 import com.example.slimfitbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,4 +26,13 @@ public class UserController {
         return userService.getUser();
     }
 
+    @GetMapping("/weight")
+    private UserWeightResponse getUserWeight() throws Exception {
+        return userService.getUserWeight();
+    }
+
+    @PostMapping("/weight")
+    private UserWeightResponse saveUserWeight(@RequestBody SaveUserWeightRequest saveUserWeightRequest) throws Exception {
+        return userService.saveUserWeight(saveUserWeightRequest);
+    }
 }
