@@ -86,8 +86,6 @@ public class DailyCalorieService {
         devideCaloriesForMeals(dailyCalorieIntake, dailyCalorie);
         dailyCalorie.setDailyActivityActual(0);
         dailyCalorie.setDailyActivityGoal(user.getDailyActivityGoal());
-        dailyCalorie.setDailyActual(0);
-        dailyCalorie.setDailyGoal(user.getDailyActivityGoal());
         return dailyCalorie;
     }
 }

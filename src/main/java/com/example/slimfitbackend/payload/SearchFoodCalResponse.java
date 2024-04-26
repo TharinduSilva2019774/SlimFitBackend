@@ -8,11 +8,6 @@ public class SearchFoodCalResponse {
 
     private List<FoodCalResponse> hintedFoods;
 
-    public SearchFoodCalResponse(FoodCalResponse matchFood, List<FoodCalResponse> hintedFoods) {
-        this.matchFood = matchFood;
-        this.hintedFoods = hintedFoods;
-    }
-
     public FoodCalResponse getMatchFood() {
         return matchFood;
     }

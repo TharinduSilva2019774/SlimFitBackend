@@ -1,8 +1,13 @@
 package com.example.slimfitbackend.payload;
 
+import lombok.Getter;
+import lombok.Setter;
+@Getter
+@Setter
 public class FoodCalResponse {
 
     private String foodName;
+
     private double cal;
 
     public FoodCalResponse(String foodName, double cal) {
