@@ -37,23 +37,24 @@ public class UserService {
 
         try {
             User user = getCurrentUser();
-                user.setAge(yearCountBetweenDates(saveUserRequest.getDateOfBirth(),new Date()));
-                user.setDateOfBirth(saveUserRequest.getDateOfBirth());
-                user.setHeight(saveUserRequest.getHeight());
-                user.setWeight(saveUserRequest.getWeight());
-                user.setGender(saveUserRequest.getGender());
-                user.setStartDate(new Date());
+            user.setAge(yearCountBetweenDates(saveUserRequest.getDateOfBirth(), new Date()));
+            user.setDateOfBirth(saveUserRequest.getDateOfBirth());
+            user.setHeight(saveUserRequest.getHeight());
+            user.setWeight(saveUserRequest.getWeight());
+            user.setStartWeight(saveUserRequest.getWeight());
+            user.setGender(saveUserRequest.getGender());
+            user.setStartDate(new Date());
 
-                //1 == male 2 == female
-                if (user.getGender() == 1) {
-                    user.setBmr(88.362 + (13.397 * user.getWeight()) + (4.799 * user.getHeight()) - (5.677 * user.getAge()));
-                } else if (user.getGender() == 2) {
-                    user.setBmr(447.593 + (9.247 * user.getWeight()) + (3.098 * user.getHeight()) - (4.330 * user.getAge()));
-                }
-                user.setWeeklyWeightLossGoal(saveUserRequest.getWeeklyWeightLossGoal());
+            //1 == male 2 == female
+            if (user.getGender() == 1) {
+                user.setBmr(88.362 + (13.397 * user.getWeight()) + (4.799 * user.getHeight()) - (5.677 * user.getAge()));
+            } else if (user.getGender() == 2) {
+                user.setBmr(447.593 + (9.247 * user.getWeight()) + (3.098 * user.getHeight()) - (4.330 * user.getAge()));
+            }
+            user.setWeeklyWeightLossGoal(saveUserRequest.getWeeklyWeightLossGoal());
 
-                user.setDailyActivityGoal(saveUserRequest.getDailyActivityGoal());
-                userRepository.save(user);
+            user.setDailyActivityGoal(saveUserRequest.getDailyActivityGoal());
+            userRepository.save(user);
 
             return true;
         } catch (Exception e) {
@@ -64,7 +65,7 @@ public class UserService {
     public User getCurrentUser() throws Exception {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<User> optUser = userRepository.findByEmail(email);
-        if (optUser.isPresent()){
+        if (optUser.isPresent()) {
             return optUser.get();
         } else {
             throw new Exception();

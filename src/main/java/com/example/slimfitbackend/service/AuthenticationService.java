@@ -30,7 +30,7 @@ public class AuthenticationService {
 
 
     public AuthenticationResponse register(RegisterRequest request) {
-        var user = new User(request.getEmail(),request.getFirstname(),request.getLastname(),passwordEncoder.encode(request.getPassword()));
+        var user = new User(request.getEmail(), request.getFirstname(), request.getLastname(), passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         return new AuthenticationResponse(jwtToken);

@@ -13,10 +13,8 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Data
 @EnableAutoConfiguration
 @Table(name = "\"user\"")
-@Builder
 public class User implements UserDetails {
 
     @Id
@@ -48,6 +46,8 @@ public class User implements UserDetails {
     private String password;
 
     private Date startDate;
+
+    private double startWeight;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -235,5 +235,13 @@ public class User implements UserDetails {
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
+    }
+
+    public double getStartWeight() {
+        return startWeight;
+    }
+
+    public void setStartWeight(double startWeight) {
+        this.startWeight = startWeight;
     }
 }
