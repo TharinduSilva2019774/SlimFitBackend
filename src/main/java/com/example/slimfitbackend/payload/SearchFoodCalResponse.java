@@ -1,26 +1,16 @@
 package com.example.slimfitbackend.payload;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
+@Setter
+@Getter
 public class SearchFoodCalResponse {
 
     private FoodCalResponse matchFood;
 
     private List<FoodCalResponse> hintedFoods;
 
-    public FoodCalResponse getMatchFood() {
-        return matchFood;
-    }
-
-    public void setMatchFood(FoodCalResponse matchFood) {
-        this.matchFood = matchFood;
-    }
-
-    public List<FoodCalResponse> getHintedFoods() {
-        return hintedFoods;
-    }
-
-    public void setHintedFoods(List<FoodCalResponse> hintedFoods) {
-        this.hintedFoods = hintedFoods;
-    }
 }

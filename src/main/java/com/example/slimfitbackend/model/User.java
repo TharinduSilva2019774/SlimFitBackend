@@ -244,4 +244,12 @@ public class User implements UserDetails {
     public void setStartWeight(double startWeight) {
         this.startWeight = startWeight;
     }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 }

@@ -1,14 +1,12 @@
 package com.example.slimfitbackend.payload;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class SaveUserWeightRequest {
 
     private double weight;
 
-    public double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
 }
