@@ -30,6 +30,9 @@ public class ProgressService {
         for (WeightProgress weightProgress : weightProgresses) {
             userWeightResponses.add(new UserWeightResponse(weightProgress.getWeight(), weightProgress.getDate()));
         }
+        if(userWeightResponses.size()>5){
+            return userWeightResponses.subList(userWeightResponses.size() - 5, userWeightResponses.size());
+        }
         return userWeightResponses;
     }
 

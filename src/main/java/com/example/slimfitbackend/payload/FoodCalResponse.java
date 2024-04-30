@@ -10,6 +10,7 @@ import lombok.Setter;
 public class FoodCalResponse {
 
     private String foodName;
+
     private double cal;
 
 }
