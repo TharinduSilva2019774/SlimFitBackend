@@ -1,5 +1,6 @@
 package com.example.slimfitbackend.service;
 
+import com.example.slimfitbackend.exceptions.CustomException;
 import com.example.slimfitbackend.model.User;
 import com.example.slimfitbackend.model.WeightProgress;
 import com.example.slimfitbackend.payload.GetUserResponse;
@@ -62,23 +63,23 @@ public class UserService {
         }
     }
 
-    public User getCurrentUser() throws Exception {
+    public User getCurrentUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<User> optUser = userRepository.findByEmail(email);
         if (optUser.isPresent()) {
             return optUser.get();
         } else {
-            throw new Exception();
+            throw new CustomException("User do not exist");
         }
 
     }
 
-    public GetUserResponse getUser() throws Exception {
+    public GetUserResponse getUser() {
         return mapStructMapper.userToGetUserResponse(getCurrentUser());
     }
 
 
-    public UserWeightResponse getUserWeight() throws Exception {
+    public UserWeightResponse getUserWeight() {
         User user = getCurrentUser();
         List<WeightProgress> userWeightLogs = weightProgressRepository.findAllByUserOrderByDate(user);
         System.out.println(userWeightLogs);

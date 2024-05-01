@@ -20,12 +20,12 @@ public class UserActivityController {
     private UserActivityService userActivityService;
 
     @PostMapping("/newActivity")
-    public NewActivityResponse addNewActivity(@RequestBody NewActivityRequest newActivityRequest) throws Exception {
+    public NewActivityResponse addNewActivity(@RequestBody NewActivityRequest newActivityRequest) {
         return userActivityService.addNewActivity(newActivityRequest);
     }
 
     @GetMapping("/calorie")
-    public PredictCalorieResponse getPredictedCal(@Valid PredictCalorieRequest predictCalorieRequest) throws Exception {
+    public PredictCalorieResponse getPredictedCal(@Valid PredictCalorieRequest predictCalorieRequest) {
         return userActivityService.getPredictedCalForAct(predictCalorieRequest);
     }
 

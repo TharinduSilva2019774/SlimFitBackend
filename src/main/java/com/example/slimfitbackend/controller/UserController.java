@@ -22,12 +22,12 @@ public class UserController {
     }
 
     @GetMapping("")
-    private GetUserResponse getUser() throws Exception {
+    private GetUserResponse getUser() {
         return userService.getUser();
     }
 
     @GetMapping("/weight")
-    private UserWeightResponse getUserWeight() throws Exception {
+    private UserWeightResponse getUserWeight() {
         return userService.getUserWeight();
     }
 

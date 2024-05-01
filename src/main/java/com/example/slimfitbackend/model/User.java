@@ -12,6 +12,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+@Getter
+@Setter
 @Entity
 @EnableAutoConfiguration
 @Table(name = "\"user\"")
@@ -21,6 +23,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
+    @Column(unique=true)
     private String email;
 
     private String firstName;
@@ -90,110 +93,6 @@ public class User implements UserDetails {
         this.weightProgresses = weightProgresses;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public Date getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public double getHeight() {
-        return height;
-    }
-
-    public void setHeight(double height) {
-        this.height = height;
-    }
-
-    public double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
-
-    public int getGender() {
-        return gender;
-    }
-
-    public void setGender(int gender) {
-        this.gender = gender;
-    }
-
-    public double getBmr() {
-        return bmr;
-    }
-
-    public void setBmr(double bmr) {
-        this.bmr = bmr;
-    }
-
-    public int getWeeklyWeightLossGoal() {
-        return weeklyWeightLossGoal;
-    }
-
-    public void setWeeklyWeightLossGoal(int weeklyWeightLossGoal) {
-        this.weeklyWeightLossGoal = weeklyWeightLossGoal;
-    }
-
-    public List<UserActivity> getUserActivities() {
-        return userActivities;
-    }
-
-    public void setUserActivities(List<UserActivity> userActivities) {
-        this.userActivities = userActivities;
-    }
-
-    public List<WeightProgress> getWeightProgresses() {
-        return weightProgresses;
-    }
-
-    public void setWeightProgresses(List<WeightProgress> weightProgresses) {
-        this.weightProgresses = weightProgresses;
-    }
-
-    public int getDailyActivityGoal() {
-        return dailyActivityGoal;
-    }
-
-    public void setDailyActivityGoal(int dailyActivityGoal) {
-        this.dailyActivityGoal = dailyActivityGoal;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(Role.User.name()));
@@ -227,29 +126,5 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public double getStartWeight() {
-        return startWeight;
-    }
-
-    public void setStartWeight(double startWeight) {
-        this.startWeight = startWeight;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 }
