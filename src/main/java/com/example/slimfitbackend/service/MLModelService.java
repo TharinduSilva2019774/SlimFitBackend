@@ -22,7 +22,7 @@ public class MLModelService {
 
     public static double getCalorie(double gender, double age, double height, double weight, double duration, double exercise_type_num, double intensity) {
         Map<String, Double> values = new HashMap<>();
-        values.put("Gender",gender);
+        values.put("Gender", gender);
         values.put("Age", age);
         values.put("Height", height);
         values.put("Weight", weight);

@@ -6,7 +6,6 @@ import com.example.slimfitbackend.model.User;
 import com.example.slimfitbackend.payload.*;
 import com.example.slimfitbackend.payload.common.MapStructMapper;
 import com.example.slimfitbackend.repository.IntakeRecordRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,48 +31,53 @@ public class IntakeRecordService {
     @Autowired
     private IntakeRecordRepository intakeRecordRepository;
 
-    public SearchFoodCalResponse getCalorieForFood(SearchFoodCalRequest searchFoodCalRequest) throws JsonProcessingException {
-        String apiUrl = "https://api.edamam.com/api/food-database/parser?nutrition-type=logging&app_id=07d50733&app_key=80fcb49b500737827a9a23f7049653b9&ingr=" + searchFoodCalRequest.getFoodName();
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.getForEntity(apiUrl, String.class);
-        JSONObject json = new JSONObject(response);
-        Object json1 = json.get("body");
-        JSONObject body = new JSONObject(json1.toString());
-        Object parsed = body.get("parsed");
-        JSONArray jsonArray = new JSONArray(parsed.toString());
-
-        SearchFoodCalResponse searchFoodCalResponse = new SearchFoodCalResponse();
+    public SearchFoodCalResponse getCalorieForFood(SearchFoodCalRequest searchFoodCalRequest) {
         try{
-            JSONObject jsonObject = jsonArray.getJSONObject(0);
-            JSONObject foodObject = jsonObject.getJSONObject("food");
-            JSONObject nutrientsObject = foodObject.getJSONObject("nutrients");
-            String name = foodObject.getString("label");
-            double enercKcal = nutrientsObject.getDouble("ENERC_KCAL");
-            searchFoodCalResponse.setMatchFood(new FoodCalResponse(name,enercKcal));
-        }catch (Exception ignored){
-            searchFoodCalResponse.setMatchFood(null);
+            String apiUrl = "https://api.edamam.com/api/food-database/parser?nutrition-type=logging&app_id=07d50733&app_key=80fcb49b500737827a9a23f7049653b9&ingr=" + searchFoodCalRequest.getFoodName();
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.getForEntity(apiUrl, String.class);
+            JSONObject json = new JSONObject(response);
+            Object json1 = json.get("body");
+            JSONObject body = new JSONObject(json1.toString());
+            Object parsed = body.get("parsed");
+            JSONArray jsonArray = new JSONArray(parsed.toString());
+
+            SearchFoodCalResponse searchFoodCalResponse = new SearchFoodCalResponse();
+            try {
+                JSONObject jsonObject = jsonArray.getJSONObject(0);
+                JSONObject foodObject = jsonObject.getJSONObject("food");
+                JSONObject nutrientsObject = foodObject.getJSONObject("nutrients");
+                String name = foodObject.getString("label");
+                double enercKcal = nutrientsObject.getDouble("ENERC_KCAL");
+                searchFoodCalResponse.setMatchFood(new FoodCalResponse(name, enercKcal));
+            } catch (Exception ignored) {
+                searchFoodCalResponse.setMatchFood(null);
+            }
+
+            Object hints = body.get("hints");
+            JSONArray hintsJsonArray = new JSONArray(hints.toString());
+
+            ArrayList<FoodCalResponse> foodCalResponses = new ArrayList<>();
+
+            for (int i = 0; i < hintsJsonArray.length(); i++) {
+                JSONObject hintJsonObject = hintsJsonArray.getJSONObject(0);
+                JSONObject hintFoodObject = hintJsonObject.getJSONObject("food");
+                JSONObject hintNutrientsObject = hintFoodObject.getJSONObject("nutrients");
+                String foodLabel = hintFoodObject.getString("label");
+                if (!doesFoodAlreadyExist(foodCalResponses, foodLabel))
+                    foodCalResponses.add(new FoodCalResponse(foodLabel, hintNutrientsObject.getDouble("ENERC_KCAL")));
+            }
+            searchFoodCalResponse.setHintedFoods(foodCalResponses);
+            return searchFoodCalResponse;
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
-        Object hints = body.get("hints");
-        JSONArray hintsJsonArray = new JSONArray(hints.toString());
-
-        ArrayList<FoodCalResponse> foodCalResponses = new ArrayList<>();
-
-        for (int i = 0; i < hintsJsonArray.length(); i++) {
-            JSONObject hintJsonObject = hintsJsonArray.getJSONObject(0);
-            JSONObject hintFoodObject = hintJsonObject.getJSONObject("food");
-            JSONObject hintNutrientsObject = hintFoodObject.getJSONObject("nutrients");
-            String foodLabel = hintFoodObject.getString("label");
-            if(!doesFoodAlreadyExist(foodCalResponses,foodLabel))
-                foodCalResponses.add(new FoodCalResponse(foodLabel, hintNutrientsObject.getDouble("ENERC_KCAL")));
-        }
-        searchFoodCalResponse.setHintedFoods(foodCalResponses);
-        return searchFoodCalResponse;
+        return new SearchFoodCalResponse();
     }
 
-    private boolean doesFoodAlreadyExist(ArrayList<FoodCalResponse> foodCalResponses,String name){
+    private boolean doesFoodAlreadyExist(ArrayList<FoodCalResponse> foodCalResponses, String name) {
         for (FoodCalResponse foodCalResponse : foodCalResponses) {
-            if(Objects.equals(foodCalResponse.getFoodName(), name))
+            if (Objects.equals(foodCalResponse.getFoodName(), name))
                 return true;
         }
         return false;

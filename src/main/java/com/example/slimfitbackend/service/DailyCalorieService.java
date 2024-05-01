@@ -26,10 +26,6 @@ public class DailyCalorieService {
 
     private int calorieDeficitPerToday(int weightLossPerWeekInG) {
 
-        if (weightLossPerWeekInG > 500) {
-            // throw exception not recommended
-        }
-
         double weightLossPerWeekInKG = (double) weightLossPerWeekInG / 1000;
 
         int oneKGFat = 7700;
