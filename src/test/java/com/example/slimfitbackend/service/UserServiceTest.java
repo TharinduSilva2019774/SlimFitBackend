@@ -14,9 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -87,7 +84,7 @@ class UserServiceTest {
     }
 
     @Test
-    void testGetUserWeight() throws Exception {
+    void testGetUserWeightResponse() throws Exception {
         // Given
         User user = new User();
         user.setEmail("test@example.com");
@@ -101,7 +98,7 @@ class UserServiceTest {
         when(weightProgressRepository.findAllByUserOrderByDate(any(User.class))).thenReturn(weightProgressList);
 
         // When
-        UserWeightResponse result = userService.getUserWeight();
+        UserWeightResponse result = userService.getUserWeightResponse();
 
         // Then
         assertEquals(70, result.getWeight());

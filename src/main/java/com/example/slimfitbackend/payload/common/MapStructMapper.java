@@ -10,6 +10,9 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface MapStructMapper {
 
+    @Mapping(target = "currentWeight", ignore = true)
+    @Mapping(target = "targetWeight", ignore = true)
+    @Mapping(target = "totalActiveMinutes", ignore = true)
     DailyCalorieResponseDto dailyCalorietoDailyCalorieResponseDto(DailyCalorie dailyCalorie);
 
     User createUserRequestToUser(SaveUserRequest saveUserRequest);

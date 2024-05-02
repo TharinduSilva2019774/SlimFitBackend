@@ -2,15 +2,19 @@ package com.example.slimfitbackend.service;
 
 import com.example.slimfitbackend.model.DailyCalorie;
 import com.example.slimfitbackend.model.User;
+import com.example.slimfitbackend.model.UserActivity;
 import com.example.slimfitbackend.payload.DailyCalorieResponseDto;
 import com.example.slimfitbackend.payload.GetDailyCalorieDto;
 import com.example.slimfitbackend.payload.common.MapStructMapper;
 import com.example.slimfitbackend.repository.DailyCalorieRepository;
+import com.example.slimfitbackend.repository.UserActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.Calendar;
 
 @Service
 public class DailyCalorieService {
@@ -23,6 +27,9 @@ public class DailyCalorieService {
 
     @Autowired
     private MapStructMapper mapStructMapper;
+
+    @Autowired
+    private UserActivityRepository userActivityRepository;
 
     private int calorieDeficitPerToday(int weightLossPerWeekInG) {
 
@@ -60,10 +67,42 @@ public class DailyCalorieService {
         if (optDailyCal.isEmpty()) {
             dailyCalorie = createNewDailyCalorie(user, getDailyCalorieDto.getDate());
             dailyCalorieRepository.save(dailyCalorie);
-            return mapStructMapper.dailyCalorietoDailyCalorieResponseDto(dailyCalorie);
+            DailyCalorieResponseDto returnObject = mapStructMapper.dailyCalorietoDailyCalorieResponseDto(dailyCalorie);
+            returnObject.setCurrentWeight(userService.getUserWeight().getWeight());
+            returnObject.setTargetWeight(user.getTargetWeight());
+            returnObject.setTotalActiveMinutes(getDailyActiveMinutes(getDailyCalorieDto.getDate()));
+            return returnObject;
         }
         // get from db comparing date if not found create
-        return mapStructMapper.dailyCalorietoDailyCalorieResponseDto(optDailyCal.get());
+        DailyCalorieResponseDto returnObject = mapStructMapper.dailyCalorietoDailyCalorieResponseDto(optDailyCal.get());
+        returnObject.setCurrentWeight(userService.getUserWeight().getWeight());
+        returnObject.setTargetWeight(user.getTargetWeight());
+        returnObject.setTotalActiveMinutes(getDailyActiveMinutes(getDailyCalorieDto.getDate()));
+        return returnObject;
+    }
+
+    public int getDailyActiveMinutes(Date currentDate){
+
+        // Set the time to midnight to represent the start of the day
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        Date startDate = calendar.getTime();
+
+        // Set the time to just before midnight to represent the end of the day
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        Date endDate = calendar.getTime();
+
+        List<UserActivity> todayActivities = userActivityRepository.findAllByDateBetween(startDate,endDate);
+        int totalMinutes = 0;
+        for (UserActivity todayActivity : todayActivities) {
+            totalMinutes += (int) todayActivity.getDuration();
+        }
+        return totalMinutes;
     }
 
     public DailyCalorie getDailyCalorie(User user, Date date) {

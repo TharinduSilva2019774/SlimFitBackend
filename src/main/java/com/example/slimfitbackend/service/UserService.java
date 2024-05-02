@@ -45,6 +45,7 @@ public class UserService {
             user.setStartWeight(saveUserRequest.getWeight());
             user.setGender(saveUserRequest.getGender());
             user.setStartDate(new Date());
+            user.setTargetWeight(saveUserRequest.getWeight());
 
             //1 == male 2 == female
             if (user.getGender() == 1) {
@@ -79,11 +80,14 @@ public class UserService {
     }
 
 
-    public UserWeightResponse getUserWeight() {
+    public UserWeightResponse getUserWeightResponse() {
+        return new UserWeightResponse(getUserWeight().getWeight());
+    }
+
+    public WeightProgress getUserWeight(){
         User user = getCurrentUser();
         List<WeightProgress> userWeightLogs = weightProgressRepository.findAllByUserOrderByDate(user);
-        System.out.println(userWeightLogs);
-        return new UserWeightResponse(userWeightLogs.get(userWeightLogs.size() - 1).getWeight());
+        return userWeightLogs.get(userWeightLogs.size() - 1);
     }
 
     public UserWeightResponse saveUserWeight(SaveUserWeightRequest saveUserWeightRequest) throws Exception {
@@ -94,4 +98,5 @@ public class UserService {
         weightProgressRepository.save(weightProgress);
         return new UserWeightResponse(weightProgress.getWeight());
     }
+
 }

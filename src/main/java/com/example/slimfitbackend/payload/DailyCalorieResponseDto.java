@@ -34,4 +34,9 @@ public class DailyCalorieResponseDto {
 
     private Date date;
 
+    private double currentWeight;
+
+    private double targetWeight;
+
+    private int totalActiveMinutes;
 }

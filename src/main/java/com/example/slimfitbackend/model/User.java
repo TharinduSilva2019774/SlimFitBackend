@@ -52,6 +52,8 @@ public class User implements UserDetails {
 
     private double startWeight;
 
+    private double targetWeight;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 

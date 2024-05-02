@@ -28,7 +28,7 @@ public class UserController {
 
     @GetMapping("/weight")
     private UserWeightResponse getUserWeight() {
-        return userService.getUserWeight();
+        return userService.getUserWeightResponse();
     }
 
     @PostMapping("/weight")

@@ -21,4 +21,6 @@ public class SaveUserRequest {
 
     private int dailyActivityGoal;
 
+    private double targetWeight;
+
 }

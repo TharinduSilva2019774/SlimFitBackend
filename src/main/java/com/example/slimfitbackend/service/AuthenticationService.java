@@ -44,14 +44,17 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        Optional<User> user = userRepository.findByEmail(request.getEmail());
+        if(user.isEmpty()){
+            throw new CustomException("Invalid email or password");
+        }
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
-        String token = jwtService.generateToken(user);
-        return new AuthenticationResponse(token);
+        return new AuthenticationResponse(jwtService.generateToken(user.get()));
     }
 }
