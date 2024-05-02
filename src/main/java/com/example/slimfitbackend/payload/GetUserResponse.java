@@ -33,4 +33,8 @@ public class GetUserResponse {
 
     private int dailyActivityGoal;
 
+    private double targetWeight;
+
+    private Date startDate;
+
 }
