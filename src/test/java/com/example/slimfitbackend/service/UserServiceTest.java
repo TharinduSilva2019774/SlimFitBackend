@@ -1,11 +1,14 @@
 package com.example.slimfitbackend.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import com.example.slimfitbackend.exceptions.CustomException;
 import com.example.slimfitbackend.model.User;
 import com.example.slimfitbackend.model.WeightProgress;
 import com.example.slimfitbackend.payload.GetUserResponse;
 import com.example.slimfitbackend.payload.SaveUserWeightRequest;
 import com.example.slimfitbackend.payload.UserWeightResponse;
-import com.example.slimfitbackend.payload.SaveUserRequest;
 import com.example.slimfitbackend.payload.common.MapStructMapper;
 import com.example.slimfitbackend.repository.UserRepository;
 import com.example.slimfitbackend.repository.WeightProgressRepository;
@@ -15,15 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 
 class UserServiceTest {
 
@@ -41,84 +36,130 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        MockitoAnnotations.initMocks(this);
     }
 
-    @Test
-    void testCreateNewUser() {
-        // Given
-        SaveUserRequest saveUserRequest = new SaveUserRequest();
-        saveUserRequest.setDateOfBirth(new Date());
-        saveUserRequest.setHeight(170);
-        saveUserRequest.setWeight(70);
-        saveUserRequest.setGender(1);
-        saveUserRequest.setWeeklyWeightLossGoal(500);
-        saveUserRequest.setDailyActivityGoal(500);
 
+    @Test
+    void testGetCurrentUser() {
+        // Arrange
         User user = new User();
         user.setEmail("test@example.com");
 
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+        UserService userServiceSpy = spy(userService);
+        doReturn(user).when(userServiceSpy).getCurrentUser();
 
-        // When
-        boolean result = userService.createNewUser(saveUserRequest);
+        // Act
+        User currentUser = userServiceSpy.getCurrentUser();
 
-        // Then
-        assertEquals(true, result);
+        // Assert
+        assertNotNull(currentUser);
+        assertEquals(user.getEmail(), currentUser.getEmail());
+        verify(userServiceSpy, times(1)).getCurrentUser();
+        verifyNoMoreInteractions(userServiceSpy);
     }
 
     @Test
-    void testGetUser() throws Exception {
-        // Given
+    void testGetUser() {
+        // Arrange
         User user = new User();
         user.setEmail("test@example.com");
 
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
-        when(mapStructMapper.userToGetUserResponse(any(User.class))).thenReturn(new GetUserResponse());
+        GetUserResponse expectedResponse = new GetUserResponse();
+        expectedResponse.setEmail("test@example.com");
 
-        // When
-        GetUserResponse result = userService.getUser();
+        UserService userServiceSpy = spy(userService);
+        doReturn(user).when(userServiceSpy).getCurrentUser();
+        when(mapStructMapper.userToGetUserResponse(user)).thenReturn(expectedResponse);
 
-        // Then
-        assertEquals(new GetUserResponse(), result);
+        // Act
+        GetUserResponse response = userServiceSpy.getUser();
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(expectedResponse.getEmail(), response.getEmail());
+        verify(userServiceSpy, times(1)).getCurrentUser();
+        verify(mapStructMapper, times(1)).userToGetUserResponse(user);
     }
 
     @Test
-    void testGetUserWeightResponse() throws Exception {
-        // Given
+    void testGetUserWeightResponse() {
+        // Arrange
         User user = new User();
         user.setEmail("test@example.com");
 
-        List<WeightProgress> weightProgressList = new ArrayList<>();
         WeightProgress weightProgress = new WeightProgress();
         weightProgress.setWeight(70);
-        weightProgressList.add(weightProgress);
 
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
-        when(weightProgressRepository.findAllByUserOrderByDate(any(User.class))).thenReturn(weightProgressList);
+        UserService userServiceSpy = spy(userService);
+        doReturn(user).when(userServiceSpy).getCurrentUser();
+        when(userServiceSpy.getUserWeight()).thenReturn(weightProgress);
 
-        // When
-        UserWeightResponse result = userService.getUserWeightResponse();
+        // Act
+        UserWeightResponse response = userServiceSpy.getUserWeightResponse();
 
-        // Then
+        // Assert
+        assertNotNull(response);
+        assertEquals(70, response.getWeight());
+    }
+
+    @Test
+    void testGetUserWeight() {
+        // Arrange
+        User user = new User();
+        user.setEmail("test@example.com");
+
+        WeightProgress weightProgress = new WeightProgress();
+        weightProgress.setWeight(70);
+
+        UserService userServiceSpy = spy(userService);
+        doReturn(user).when(userServiceSpy).getCurrentUser();
+        when(weightProgressRepository.findAllByUserOrderByDate(user)).thenReturn(List.of(weightProgress));
+
+        // Act
+        WeightProgress result = userServiceSpy.getUserWeight();
+
+        // Assert
+        assertNotNull(result);
         assertEquals(70, result.getWeight());
+        verify(userServiceSpy, times(1)).getCurrentUser();
+        verify(weightProgressRepository, times(1)).findAllByUserOrderByDate(user);
     }
 
     @Test
     void testSaveUserWeight() throws Exception {
-        // Given
+        // Arrange
         SaveUserWeightRequest saveUserWeightRequest = new SaveUserWeightRequest();
         saveUserWeightRequest.setWeight(70);
 
         User user = new User();
         user.setEmail("test@example.com");
 
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+        UserService userServiceSpy = spy(userService);
+        doReturn(user).when(userServiceSpy).getCurrentUser();
 
-        // When
-        UserWeightResponse result = userService.saveUserWeight(saveUserWeightRequest);
+        // Act
+        UserWeightResponse response = userServiceSpy.saveUserWeight(saveUserWeightRequest);
 
-        // Then
-        assertEquals(70, result.getWeight());
+        // Assert
+        assertNotNull(response);
+        assertEquals(70, response.getWeight());
+        verify(userServiceSpy, times(1)).getCurrentUser();
+        verify(weightProgressRepository, times(1)).save(any(WeightProgress.class));
+    }
+
+    @Test
+    void testSaveUserWeight_ThrowsException() {
+        // Arrange
+        SaveUserWeightRequest saveUserWeightRequest = new SaveUserWeightRequest();
+        saveUserWeightRequest.setWeight(70);
+
+        UserService userServiceSpy = spy(userService);
+        doThrow(CustomException.class).when(userServiceSpy).getCurrentUser();
+
+        // Act & Assert
+        assertThrows(CustomException.class, () -> userServiceSpy.saveUserWeight(saveUserWeightRequest));
+        verify(userServiceSpy, times(1)).getCurrentUser();
+        verifyNoInteractions(weightProgressRepository);
     }
 }

@@ -24,6 +24,6 @@ public class MyUserDetailsService implements UserDetailsService {
         if (optionalUser.isPresent()){
             return new org.springframework.security.core.userdetails.User(optionalUser.get().getEmail(),"foo",new ArrayList<>());
         }
-        return null;
+        throw new UsernameNotFoundException("User not found");
     }
 }

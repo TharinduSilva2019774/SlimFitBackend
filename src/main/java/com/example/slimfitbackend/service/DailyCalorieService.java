@@ -83,7 +83,7 @@ public class DailyCalorieService {
 
     public int getDailyActiveMinutes(Date currentDate){
 
-        // Set the time to midnight to represent the start of the day
+        // Set the time to midnight  represent the start of the day
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(currentDate);
         calendar.set(Calendar.HOUR_OF_DAY, 0);

@@ -2,14 +2,17 @@ package com.example.slimfitbackend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 import java.util.Date;
+
 
 @Entity
 @Data
 @EnableAutoConfiguration
 @Table(name = "weight_progress")
+@NoArgsConstructor
 public class WeightProgress {
 
     @Id
@@ -24,35 +27,8 @@ public class WeightProgress {
 
     private Date date;
 
-    public Long getWeightProgressId() {
-        return weightProgressId;
-    }
-
-    public void setWeightProgressId(Long weightProgressId) {
-        this.weightProgressId = weightProgressId;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
+    public WeightProgress(User user, double weight) {
         this.user = user;
-    }
-
-    public double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(double weight) {
         this.weight = weight;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 }

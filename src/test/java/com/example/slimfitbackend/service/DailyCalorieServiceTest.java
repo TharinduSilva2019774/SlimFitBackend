@@ -2,22 +2,22 @@ package com.example.slimfitbackend.service;
 
 import com.example.slimfitbackend.model.DailyCalorie;
 import com.example.slimfitbackend.model.User;
+import com.example.slimfitbackend.model.WeightProgress;
 import com.example.slimfitbackend.payload.DailyCalorieResponseDto;
 import com.example.slimfitbackend.payload.GetDailyCalorieDto;
 import com.example.slimfitbackend.payload.common.MapStructMapper;
 import com.example.slimfitbackend.repository.DailyCalorieRepository;
+import com.example.slimfitbackend.repository.UserActivityRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class DailyCalorieServiceTest {
 
@@ -30,52 +30,62 @@ class DailyCalorieServiceTest {
     @Mock
     private MapStructMapper mapStructMapper;
 
+    @Mock
+    private UserActivityRepository userActivityRepository;
+
     @InjectMocks
     private DailyCalorieService dailyCalorieService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test
     void testGetDailyCalorieResponse() throws Exception {
-        // Given
-        GetDailyCalorieDto getDailyCalorieDto = new GetDailyCalorieDto();
-        getDailyCalorieDto.setDate(new Date());
-
+        // Mocking user
         User user = new User();
-        user.setWeeklyWeightLossGoal(500); // Assuming 500 grams per week
-        user.setDailyActivityGoal(2000); // Assuming daily activity goal
-        user.setBmr(1800); // Assuming Basal Metabolic Rate
+        user.setUserId(1L);
+        user.setBmr(2000);
+        user.setDailyActivityGoal(500);
+        user.setWeeklyWeightLossGoal(1000);
 
-        DailyCalorie dailyCalorie = new DailyCalorie();
-        dailyCalorie.setUser(user);
-        dailyCalorie.setDate(new Date());
-        // Assuming some values for actual and goal calories
-        dailyCalorie.setDailyGoal(1800);
-        dailyCalorie.setDailyActual(1600);
-        dailyCalorie.setDailyActivityGoal(2000);
-        dailyCalorie.setDailyActivityActual(1800);
-        dailyCalorie.setBreakfastGoal(400);
-        dailyCalorie.setBreakfastActual(300);
-        dailyCalorie.setLunchGoal(600);
-        dailyCalorie.setLunchActual(500);
-        dailyCalorie.setDinnerGoal(600);
-        dailyCalorie.setDinnerActual(500);
-        dailyCalorie.setSnackGoal(200);
-        dailyCalorie.setSnackActual(100);
+        // Mocking current date
+        Date currentDate = new Date();
 
+        // Mocking user service to return current user
         when(userService.getCurrentUser()).thenReturn(user);
-        when(dailyCalorieRepository.findByDateAndUser(any(Date.class), any(User.class))).thenReturn(Optional.of(dailyCalorie));
-        DailyCalorieResponseDto returnObj = new DailyCalorieResponseDto();
-        returnObj.setDailyActual(dailyCalorie.getDailyActual());
-        when(mapStructMapper.dailyCalorietoDailyCalorieResponseDto(any(DailyCalorie.class))).thenReturn(returnObj);
 
-        // When
-        DailyCalorieResponseDto result = dailyCalorieService.getDailyCalorieResponse(getDailyCalorieDto);
+        // Mocking daily calorie response DTO
+        DailyCalorieResponseDto mockedResponseDto = new DailyCalorieResponseDto();
+        mockedResponseDto.setDailyGoal(1800);
+        mockedResponseDto.setCurrentWeight(70);
+        mockedResponseDto.setTargetWeight(65);
+        mockedResponseDto.setTotalActiveMinutes(60);
 
-        // Then
-        assertEquals(dailyCalorie.getDailyActual(), result.getDailyActual());
+        WeightProgress weightProgress = new WeightProgress();
+        weightProgress.setWeight(10.0);
+
+        // Mocking daily calorie repository
+        when(dailyCalorieRepository.findByDateAndUser(any(Date.class), eq(user))).thenReturn(Optional.empty());
+        DailyCalorie newDailyCalorie = new DailyCalorie();
+        when(dailyCalorieRepository.save(any(DailyCalorie.class))).thenReturn(newDailyCalorie);
+        when(mapStructMapper.dailyCalorietoDailyCalorieResponseDto(any())).thenReturn(mockedResponseDto);
+        when(userService.getUserWeight()).thenReturn(weightProgress);
+
+        // Test
+        GetDailyCalorieDto getDailyCalorieDto = new GetDailyCalorieDto();
+        getDailyCalorieDto.setDate(currentDate);
+        DailyCalorieResponseDto responseDto = dailyCalorieService.getDailyCalorieResponse(getDailyCalorieDto);
+
+        mockedResponseDto.setCurrentWeight(weightProgress.getWeight());
+        mockedResponseDto.setTotalActiveMinutes(0);
+
+        // Verify
+        assertEquals(mockedResponseDto, responseDto);
+        verify(userService, times(1)).getCurrentUser();
+        verify(dailyCalorieRepository, times(1)).findByDateAndUser(any(Date.class), eq(user));
+        verify(dailyCalorieRepository, times(1)).save(any(DailyCalorie.class));
     }
+
 }

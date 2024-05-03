@@ -87,7 +87,10 @@ public class UserService {
     public WeightProgress getUserWeight(){
         User user = getCurrentUser();
         List<WeightProgress> userWeightLogs = weightProgressRepository.findAllByUserOrderByDate(user);
-        return userWeightLogs.get(userWeightLogs.size() - 1);
+        if(!userWeightLogs.isEmpty()){
+            return userWeightLogs.get(userWeightLogs.size() - 1);
+        }
+        return new WeightProgress(user, user.getWeight());
     }
 
     public UserWeightResponse saveUserWeight(SaveUserWeightRequest saveUserWeightRequest) throws Exception {
