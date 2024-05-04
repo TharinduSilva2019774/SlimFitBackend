@@ -56,7 +56,7 @@ public class UserActivityService {
 
         DailyCalorie daily = dailyCalorieService.getDailyCalorie(user, newActivityRequest.getDate());
         daily.setDailyActivityActual(daily.getDailyActivityActual() + newActivityRequest.getCalorie());
-        daily.setDailyActual(daily.getDailyActual() + newActivityRequest.getCalorie());
+        daily.setDailyActual(daily.getDailyActual() - newActivityRequest.getCalorie());
         dailyCalorieRepository.save(daily);
 
         return mapStructMapper.userActivityToNewActivityResponse(userActivity);
