@@ -20,13 +20,7 @@ public class IntakeRecordController {
 
     @PostMapping("/newRecord")
     public IntakeRecordResponse addNewRecord(@RequestBody IntakeRecordRequest intakeRecordRequest) throws Exception {
-        try{
-            IntakeRecordResponse t = intakeRecordService.saveNewIntakeRecord(intakeRecordRequest);
-            return t;
-        }catch(Exception e){
-            System.out.println(e.getMessage());
-        }
-        return null;
+            return intakeRecordService.saveNewIntakeRecord(intakeRecordRequest);
     }
 
 }

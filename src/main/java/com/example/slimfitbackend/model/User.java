@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -15,7 +16,6 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@EnableAutoConfiguration
 @Table(name = "\"user\"")
 public class User implements UserDetails {
 
@@ -23,22 +23,29 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(unique=true)
+    @Email
+    @NotNull
     private String email;
 
+    @NotNull
     private String firstName;
 
+    @NotNull
     private String lastName;
 
+    @Min(20)
     private int age;
 
+    @Past
     private Date dateOfBirth;
+
+    @Min(0)
+    @Max(2)
+    private int gender;
 
     private double height;
 
     private double weight;
-
-    private int gender;
 
     private double bmr;
 
