@@ -20,7 +20,7 @@ public class IntakeRecordController {
 
     @PostMapping("/newRecord")
     public IntakeRecordResponse addNewRecord(@RequestBody IntakeRecordRequest intakeRecordRequest) throws Exception {
-        return intakeRecordService.saveNewIntakeRecord(intakeRecordRequest);
+            return intakeRecordService.saveNewIntakeRecord(intakeRecordRequest);
     }
 
 }

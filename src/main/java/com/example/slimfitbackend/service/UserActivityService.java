@@ -42,7 +42,7 @@ public class UserActivityService {
     private MapStructMapper mapStructMapper;
 
 
-    public NewActivityResponse addNewActivity(NewActivityRequest newActivityRequest) throws Exception {
+    public NewActivityResponse addNewActivity(NewActivityRequest newActivityRequest) {
         UserActivity userActivity = new UserActivity();
         User user = userService.getCurrentUser();
         userActivity.setUser(user);
@@ -54,15 +54,15 @@ public class UserActivityService {
         activityType.ifPresent(userActivity::setActivityType);
         userActivityRepository.save(userActivity);
 
-        DailyCalorie daily = dailyCalorieService.getDailyCalorie(user,newActivityRequest.getDate());
+        DailyCalorie daily = dailyCalorieService.getDailyCalorie(user, newActivityRequest.getDate());
         daily.setDailyActivityActual(daily.getDailyActivityActual() + newActivityRequest.getCalorie());
-        daily.setDailyActual(daily.getDailyActual() + newActivityRequest.getCalorie());
+        daily.setDailyActual(daily.getDailyActual() - newActivityRequest.getCalorie());
         dailyCalorieRepository.save(daily);
 
         return mapStructMapper.userActivityToNewActivityResponse(userActivity);
     }
 
-    public PredictCalorieResponse getPredictedCalForAct(PredictCalorieRequest predictCalorieRequest) throws Exception {
+    public PredictCalorieResponse getPredictedCalForAct(PredictCalorieRequest predictCalorieRequest) {
         User user = userService.getCurrentUser();
         double results = MLModelService.getCalorie(user.getGender(), user.getAge(), user.getHeight(), user.getWeight(), predictCalorieRequest.getDuration(), predictCalorieRequest.getActId(), predictCalorieRequest.getIntensity());
         PredictCalorieResponse predictCalorieResponse = new PredictCalorieResponse();
@@ -70,11 +70,11 @@ public class UserActivityService {
         return predictCalorieResponse;
     }
 
-    public List<GetActivitiesResponse> getActivities(){
+    public List<GetActivitiesResponse> getActivities() {
         List<ActivityType> activities = activityTypeRepository.findAll();
         List<GetActivitiesResponse> getActivitiesResponseList = new ArrayList<>();
         for (ActivityType activity : activities) {
-            getActivitiesResponseList.add(new GetActivitiesResponse(activity.getName(),activity.getActId()));
+            getActivitiesResponseList.add(new GetActivitiesResponse(activity.getName(), activity.getActId()));
         }
         return getActivitiesResponseList;
     }

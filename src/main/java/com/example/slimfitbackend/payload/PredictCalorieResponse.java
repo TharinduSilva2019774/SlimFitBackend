@@ -9,11 +9,4 @@ public class PredictCalorieResponse {
 
     private double calorie;
 
-    public double getCalorie() {
-        return calorie;
-    }
-
-    public void setCalorie(double calorie) {
-        this.calorie = calorie;
-    }
 }

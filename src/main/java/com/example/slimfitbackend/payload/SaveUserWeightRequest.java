@@ -5,8 +5,8 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class SendMessageRequest {
+public class SaveUserWeightRequest {
 
-    private String message;
+    private double weight;
 
 }

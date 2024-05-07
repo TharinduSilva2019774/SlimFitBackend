@@ -7,37 +7,45 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+@Getter
+@Setter
 @Entity
-@Data
-@EnableAutoConfiguration
 @Table(name = "\"user\"")
-@Builder
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
+    @Email
+    @NotNull
     private String email;
 
+    @NotNull
     private String firstName;
 
+    @NotNull
     private String lastName;
 
+    @Min(20)
     private int age;
 
+    @Past
     private Date dateOfBirth;
+
+    @Min(0)
+    @Max(2)
+    private int gender;
 
     private double height;
 
     private double weight;
-
-    private int gender;
 
     private double bmr;
 
@@ -46,6 +54,12 @@ public class User implements UserDetails {
     private int dailyActivityGoal;
 
     private String password;
+
+    private Date startDate;
+
+    private double startWeight;
+
+    private double targetWeight;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -86,110 +100,6 @@ public class User implements UserDetails {
         this.role = role;
         this.userActivities = userActivities;
         this.weightProgresses = weightProgresses;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public Date getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public double getHeight() {
-        return height;
-    }
-
-    public void setHeight(double height) {
-        this.height = height;
-    }
-
-    public double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
-
-    public int getGender() {
-        return gender;
-    }
-
-    public void setGender(int gender) {
-        this.gender = gender;
-    }
-
-    public double getBmr() {
-        return bmr;
-    }
-
-    public void setBmr(double bmr) {
-        this.bmr = bmr;
-    }
-
-    public int getWeeklyWeightLossGoal() {
-        return weeklyWeightLossGoal;
-    }
-
-    public void setWeeklyWeightLossGoal(int weeklyWeightLossGoal) {
-        this.weeklyWeightLossGoal = weeklyWeightLossGoal;
-    }
-
-    public List<UserActivity> getUserActivities() {
-        return userActivities;
-    }
-
-    public void setUserActivities(List<UserActivity> userActivities) {
-        this.userActivities = userActivities;
-    }
-
-    public List<WeightProgress> getWeightProgresses() {
-        return weightProgresses;
-    }
-
-    public void setWeightProgresses(List<WeightProgress> weightProgresses) {
-        this.weightProgresses = weightProgresses;
-    }
-
-    public int getDailyActivityGoal() {
-        return dailyActivityGoal;
-    }
-
-    public void setDailyActivityGoal(int dailyActivityGoal) {
-        this.dailyActivityGoal = dailyActivityGoal;
     }
 
     @Override

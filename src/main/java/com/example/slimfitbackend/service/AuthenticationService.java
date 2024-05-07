@@ -1,5 +1,6 @@
 package com.example.slimfitbackend.service;
 
+import com.example.slimfitbackend.exceptions.CustomException;
 import com.example.slimfitbackend.model.User;
 import com.example.slimfitbackend.payload.AuthenticationRequest;
 import com.example.slimfitbackend.payload.AuthenticationResponse;
@@ -11,6 +12,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,21 +33,28 @@ public class AuthenticationService {
 
 
     public AuthenticationResponse register(RegisterRequest request) {
-        var user = new User(request.getEmail(),request.getFirstname(),request.getLastname(),passwordEncoder.encode(request.getPassword()));
+        var user = new User(request.getEmail(), request.getFirstname(), request.getLastname(), passwordEncoder.encode(request.getPassword()));
+        Optional<User> optUser = userRepository.findByEmail(request.getEmail());
+        if(optUser.isPresent()){
+            throw new CustomException("User already exist");
+        }
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         return new AuthenticationResponse(jwtToken);
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        Optional<User> user = userRepository.findByEmail(request.getEmail());
+        if(user.isEmpty()){
+            throw new CustomException("Invalid email or password");
+        }
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
-        String token = jwtService.generateToken(user);
-        return new AuthenticationResponse(token);
+        return new AuthenticationResponse(jwtService.generateToken(user.get()));
     }
 }
