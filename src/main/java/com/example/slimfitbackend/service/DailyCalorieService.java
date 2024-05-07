@@ -70,18 +70,18 @@ public class DailyCalorieService {
             DailyCalorieResponseDto returnObject = mapStructMapper.dailyCalorietoDailyCalorieResponseDto(dailyCalorie);
             returnObject.setCurrentWeight(userService.getUserWeight().getWeight());
             returnObject.setTargetWeight(user.getTargetWeight());
-            returnObject.setTotalActiveMinutes(getDailyActiveMinutes(getDailyCalorieDto.getDate()));
+            returnObject.setTotalActiveMinutes(getDailyActiveMinutes(getDailyCalorieDto.getDate(),user));
             return returnObject;
         }
         // get from db comparing date if not found create
         DailyCalorieResponseDto returnObject = mapStructMapper.dailyCalorietoDailyCalorieResponseDto(optDailyCal.get());
         returnObject.setCurrentWeight(userService.getUserWeight().getWeight());
         returnObject.setTargetWeight(user.getTargetWeight());
-        returnObject.setTotalActiveMinutes(getDailyActiveMinutes(getDailyCalorieDto.getDate()));
+        returnObject.setTotalActiveMinutes(getDailyActiveMinutes(getDailyCalorieDto.getDate(),user));
         return returnObject;
     }
 
-    public int getDailyActiveMinutes(Date currentDate){
+    public int getDailyActiveMinutes(Date currentDate, User user){
 
         // Set the time to midnight  represent the start of the day
         Calendar calendar = Calendar.getInstance();
@@ -97,7 +97,7 @@ public class DailyCalorieService {
         calendar.set(Calendar.SECOND, 59);
         Date endDate = calendar.getTime();
 
-        List<UserActivity> todayActivities = userActivityRepository.findAllByDateBetween(startDate,endDate);
+        List<UserActivity> todayActivities = userActivityRepository.findAllByDateBetweenAndUser(startDate,endDate,user);
         int totalMinutes = 0;
         for (UserActivity todayActivity : todayActivities) {
             totalMinutes += (int) todayActivity.getDuration();

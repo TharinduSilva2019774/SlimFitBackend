@@ -45,7 +45,7 @@ public class UserService {
             user.setStartWeight(saveUserRequest.getWeight());
             user.setGender(saveUserRequest.getGender());
             user.setStartDate(new Date());
-            user.setTargetWeight(saveUserRequest.getWeight());
+            user.setTargetWeight(saveUserRequest.getTargetWeight());
 
             //1 == male 2 == female
             if (user.getGender() == 1) {
